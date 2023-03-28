@@ -71,7 +71,7 @@ void assign_exclusive_cpu_core(pthread_attr_t *attr) {
     cpu_set_t cpus;
     CPU_ZERO(&cpus);
     CPU_SET(current_cpu_core, &cpus);
-    pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &cpus);
+    pthread_attr_setaffinity_np(attr, sizeof(cpu_set_t), &cpus);
 }
 
 int main(int argc, char **argv) {
@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
         pthread_create(&threads[1], &attr, protector_thread, NULL);
         // Here we act as the part of question asks us
         assign_exclusive_cpu_core(&attr);
-        pthread_create(&threads[2], &attr, reader_thread, NULL);
+        pthread_create(&threads[2], &attr, write_thread, NULL);
         assign_exclusive_cpu_core(&attr);
         pthread_create(&threads[3], &attr, write_thread, NULL);
         // Join the threads

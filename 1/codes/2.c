@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <fcntl.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -98,7 +99,7 @@ void assign_exclusive_cpu_core(pthread_attr_t *attr) {
     cpu_set_t cpus;
     CPU_ZERO(&cpus);
     CPU_SET(current_cpu_core, &cpus);
-    pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &cpus);
+    pthread_attr_setaffinity_np(attr, sizeof(cpu_set_t), &cpus);
 }
 
 int main(int argc, char **argv) {
