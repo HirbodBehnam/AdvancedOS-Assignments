@@ -9,7 +9,7 @@
 pthread_mutex_t allocated_memory_cond_var_lock = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t allocated_memory_cond_var = PTHREAD_COND_INITIALIZER;
 char *allocated_memory = NULL;
-#define ALLOCATED_MEMORY_SIZE 4096
+#define ALLOCATED_MEMORY_SIZE (1024)
 
 void *allocator_thread(void *args) {
     // Allocate memory and signal threads that we have allocated it
@@ -67,7 +67,8 @@ void *write_thread(void *args) {
 
 void assign_exclusive_cpu_core(pthread_attr_t *attr) {
     static int cpu_core_counter = 0;
-    int current_cpu_core = ++cpu_core_counter; // this makes the cores start from 1
+    int current_cpu_core = (cpu_core_counter % 4) + 1; // this makes the cores start from 1
+    cpu_core_counter++;
     cpu_set_t cpus;
     CPU_ZERO(&cpus);
     CPU_SET(current_cpu_core, &cpus);
@@ -82,6 +83,8 @@ int main(int argc, char **argv) {
     }
     int iterations = 0;
     sscanf(argv[1], "%d", &iterations);
+    printf("Allocating %d bytes of memory\n", ALLOCATED_MEMORY_SIZE);
+    fflush(stdout); // Always show this to user
     // Do the thing
     while (iterations--) {
         pthread_t threads[4];

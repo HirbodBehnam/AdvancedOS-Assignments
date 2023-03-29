@@ -24,6 +24,7 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{sectsty}
+\usepackage{pgfplots}
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
@@ -56,6 +57,15 @@
 		\lstinputlisting{#1}
 	\end{latin}
 	\RTL
+}
+\newcommand{\samplebox}[1]{
+	\begin{tcolorbox}[breakable,boxrule=0pt]
+    \begin{latin}
+        #1
+    \end{latin}
+    \end{tcolorbox}
+	\vspace{0.2cm}
+	\noindent
 }
 \newcommand{\printheader}[0]{
 	\thispagestyle{fancy}
