@@ -1,5 +1,145 @@
 \smalltitle{سوال 4}
+\\\noindent
+من زمانی که بر روی اندازه‌گیری
+\lr{TLB shootdown}
+به کمک
+\lr{perf}
+سرچ می‌کردم، به
+\link{https://www.jabperf.com/how-to-deter-or-disarm-tlb-shootdowns/}{این}
+لینک رسیدم که تقریبا خواسته‌ی سوال بود! با این حال بدون کپی کردن کد و از خودم کد را نوشتم.
 
+خود دستور
+\lr{madvise}
+به سیستم‌عامل
+\lr{hint}هایی
+جهت استفاده از مموری داده شده به عنوان پارامتر را می‌دهد. در این کد من از
+\lr{MADV\_DONTNEED}
+استفاده کردم. با توجه به
+\link{https://man7.org/linux/man-pages/man2/madvise.2.html}{\lr{man page}}
+این تابع می‌توان نتیجه گرفت که به صورت خلاصه این
+\lr{hint}
+به سیستم‌عامل می‌گوید که این قسمت از مموری در آینده‌ی نزدیک استفاده نمی‌شود.
+این باعث می‌شود که یک
+\lr{TLB shootdown}
+برای این
+\lr{page}
+از مموری اتفاق بیفتد که جا در
+\lr{TLB}
+آزاد شود.
 
+در این قسمت نیز برای
+\lr{align}
+کردن مموری به
+\lr{page}ها
+از
+\lr{pvalloc}
+استفاده کردم.
 
+برای اجرای
+perf
+نیز از دستورات زیر استفاده کردم:
+\samplebox{perf stat -e itlb.itlb\_flush,tlb\_flush.dtlb\_thread,tlb\_flush.stlb\_any,page-faults,cache-misses ./3.out 1}
 
+حال به سوالات پرسیده شده جواب می‌دهیم.
+\begin{enumerate}
+    \item نتایج بدست آمده از اسکریپت در زیر قابل مشاهده است.
+    \begin{latin}
+    \centering
+    \begin{tabular}{ccccccc}
+    \hline
+    \csvreader[no head,table head=\hline,late after line=\\\hline]{codes/3-stat.csv}{1=\one,2=\two,3=\three,4=\four,5=\five,6=\six,7=\seven}
+    {\one & \two & \three & \four & \five & \six & \seven}
+    \end{tabular}
+    \end{latin}
+    همان طور که مشخص است تمامی انواع
+    \lr{TLB shootdown}ها
+    با بالا رفتن تعداد ترد‌ها زیاد می‌شوند. دلیل بالا رفتن تعداد
+    \lr{TLB shootdown}ها
+    همان طور که در قسمت قبل گفته شد، خالی کردن
+    \lr{TLB}
+    برای
+    \lr{page}های
+    دیگر است.
+    نکته‌ای که چشم من را گرفت این است که
+    \lr{page fault}
+    با اینکه به صورت کاملا صعودی بالا رفته است،‌ ولی تعداد آن خیلی زیاد نیست. ما در هر ترد صد هزار بار
+    \lr{madvise}
+    می‌کنیم. اما برای هر تردی که اضافه می‌شود تعداد 
+    \lr{page fault}ها
+    در حدود ۲ تا زیاد می‌شود. این رفتار به نظر من تقصیر
+    \lr{madvise}
+    نیست. بلکه احتمالا تقصیر ساختن ترد‌ها و یا طول کشیدن بیشتر برنامه است. دقت کنید که مموری
+    \lr{allocate}
+    شده نیز برابر
+    ۳۲ کیلوبایت یا
+    ۸ صفحه است.
+    همچنین مشاهده می‌شود که
+    \lr{cache miss}
+    نیز زیاد می‌شود. این موضوع می‌تواند دو دلیل داشته باشد. یا اینکه صرفا مثل
+    \lr{page fault}
+    برای ساخت ترد باشد، یا اینکه دستور
+    \lr{madvise}
+    باعث می‌شود که مموری داده شده از
+    \lr{cache}
+    نیز پاک شود.
+
+    همچنین مشخص است که هر چه قدر تعداد
+    \lr{TLB shootdown}های
+    ما بیشتر باشد برنامه نیز زمان بیشتری اجرایش طول می‌کشد.
+    \item نمودار‌های خواسته شده را بر اساس جدول بالا رسم می‌کنیم.
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}
+        \addplot table [x=threads, y=itlb, col sep=comma] {codes/3-stat.csv};
+        \end{axis}
+        \end{tikzpicture}
+        \caption{\lr{ITLB shootdown} بر حسب تعداد ترد}
+    \end{figure}
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}
+        \addplot table [x=threads, y=dtlb, col sep=comma] {codes/3-stat.csv};
+        \end{axis}
+        \end{tikzpicture}
+        \caption{\lr{DTLB shootdown} بر حسب تعداد ترد}
+    \end{figure}
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}
+        \addplot table [x=threads, y=stlb, col sep=comma] {codes/3-stat.csv};
+        \end{axis}
+        \end{tikzpicture}
+        \caption{\lr{STLB shootdown} بر حسب تعداد ترد}
+    \end{figure}
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}
+        \addplot table [x=threads, y=pagefault, col sep=comma] {codes/3-stat.csv};
+        \end{axis}
+        \end{tikzpicture}
+        \caption{\lr{Page fault} بر حسب تعداد ترد}
+    \end{figure}
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}
+        \addplot table [x=threads, y=cachemiss, col sep=comma] {codes/3-stat.csv};
+        \end{axis}
+        \end{tikzpicture}
+        \caption{\lr{Cache miss} بر حسب تعداد ترد}
+    \end{figure}
+    \item \phantom{text}
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}
+        \addplot table [x=threads, y=time, col sep=comma] {codes/3-stat.csv};
+        \end{axis}
+        \end{tikzpicture}
+        \caption{زمان اجرا به ثانیه بر حسب تعداد ترد}
+    \end{figure}
+\end{enumerate}
