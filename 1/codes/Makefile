@@ -9,4 +9,5 @@ compile: $(OEXECUTABLES)
 	gcc $< -std=c99 -lpthread -o $@ -O3
 
 clean:
-	rm -rf $(OEXECUTABLES)
+	rm -f $(OEXECUTABLES)
+	rm -f *.dat

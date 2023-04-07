@@ -5,13 +5,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
 pthread_mutex_t exchanged_cond_var_lock = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t exchanged_cond_var = PTHREAD_COND_INITIALIZER;
 char *exchanged = NULL;
+int exchanged_fd = -1;
 #define EXCHANGED_SIZE 4096
 #define EXCHANGED_FILENAME1 "dummy1.dat"
-#define EXCHANGED_FILENAME2 "dummy2.dat"
 
 void *mapper_thread(void *args) {
     // Allocate memory and signal threads that we have allocated it
@@ -22,12 +23,12 @@ void *mapper_thread(void *args) {
         perror("cannot allocate memory");
         exit(1);
     }
-    int fd = open(EXCHANGED_FILENAME1, O_RDWR);
-    if (fd == -1) {
+    exchanged_fd = open(EXCHANGED_FILENAME1, O_RDWR);
+    if (exchanged_fd == -1) {
         perror("cannot open exchanged 1 file");
         exit(1);
     }
-    exchanged = mmap(exchanged, EXCHANGED_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+    exchanged = mmap(exchanged, EXCHANGED_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE, exchanged_fd, 0);
     if (exchanged == MAP_FAILED) {
         perror("cannot map exchanged 1 file");
         exit(1);
@@ -37,22 +38,18 @@ void *mapper_thread(void *args) {
     return NULL;
 }
 
-void *mapper_thread_2(void *args) {
+void *unmapper_thread(void *args) {
     // Wait for memory to be allocated
     pthread_mutex_lock(&exchanged_cond_var_lock);
     while (exchanged == NULL)
         pthread_cond_wait(&exchanged_cond_var, &exchanged_cond_var_lock);
     pthread_mutex_unlock(&exchanged_cond_var_lock);
-    int fd = open(EXCHANGED_FILENAME2, O_RDWR);
-    if (fd == -1) {
-        perror("cannot open exchanged 2 file");
+    // Unmap the file and close the file descriptor
+    if (munmap(exchanged, EXCHANGED_SIZE) < 0) {
+        perror("cannot unmap the file");
         exit(1);
     }
-    exchanged = mmap(exchanged, EXCHANGED_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
-    if (exchanged == MAP_FAILED) {
-        perror("cannot map exchanged 2 file");
-        exit(1);
-    }
+    close(exchanged_fd);
     return NULL;
 }
 
@@ -110,7 +107,6 @@ int main(int argc, char **argv) {
     srand(time(NULL));
     // Clean up the old files and create new files
     create_dummy_file(EXCHANGED_FILENAME1);
-    create_dummy_file(EXCHANGED_FILENAME2);
     // Do the thing
     pthread_t threads[4];
     pthread_attr_t attr;
@@ -118,14 +114,14 @@ int main(int argc, char **argv) {
     // First thread shall allocate the memory
     assign_exclusive_cpu_core(&attr);
     pthread_create(&threads[0], &attr, mapper_thread, NULL);
-    // Second thread shall map again
+    // Second thread shall unmap
     assign_exclusive_cpu_core(&attr);
-    pthread_create(&threads[1], &attr, mapper_thread_2, NULL);
+    pthread_create(&threads[1], &attr, unmapper_thread, NULL);
     // Here we act as the part of question asks us
     assign_exclusive_cpu_core(&attr);
-    pthread_create(&threads[2], &attr, write_thread, NULL);
+    pthread_create(&threads[2], &attr, reader_thread, NULL);
     assign_exclusive_cpu_core(&attr);
-    pthread_create(&threads[3], &attr, write_thread, NULL);
+    pthread_create(&threads[3], &attr, reader_thread, NULL);
     // Join the threads
     for (int i = 0; i < 4; i++)
         pthread_join(threads[i], NULL);

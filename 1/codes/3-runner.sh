@@ -1,4 +1,4 @@
-#!/usr/bash
+#!/bin/bash
 echo "threads,itlb,dtlb,stlb,pagefault,cachemiss,time" > stat.csv # empty the stat file
 for i in $(seq 1 7); do
     OUT=$(sudo perf stat -e itlb.itlb_flush,tlb_flush.dtlb_thread,tlb_flush.stlb_any,page-faults,cache-misses ./3.out "$i" 2>&1)
