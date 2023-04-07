@@ -2,11 +2,13 @@
 \\\noindent
 در ابتدا به چند نکته اشاره می‌کنم که لازم بود در کد این سوال رعایت کنم.
 در ابتدا برای استفاده از تابع
-\lr{pthread\_attr\_setaffinity\_np}
+\linebreak
+\codeword{pthread\_attr\_setaffinity\_np}
 مجبور بودم که در اولین خط برنامه قبل از
 \lr{import}ها
 خط
-\lr{\#define \_GNU\_SOURCE}
+\linebreak
+\codeword{\#define \_GNU\_SOURCE}
 را اضافه کنم.
 (
 \link{https://stackoverflow.com/a/7269859/4213397}{منبع}
@@ -21,10 +23,10 @@ align
 \lr{page}های
 سیستم بود. بدین منظور که به عنوان مثال در سیستم من که سایز صفحات 4096 بایت است،‌ اول مموری که
 به تابع
-\lr{mprotect}
+\codeword{mprotect}
 داده می‌شود باید بر 4096 بخش پذیر باشد.
 بدین منظور من به جای استفاده از تابع
-\lr{malloc}
+\codeword{malloc}
 از تابع
 \link{https://linux.die.net/man/3/pvalloc}{pvalloc}
 استفاده کردم که دقیقا برای همین کار ساخته شده است.
@@ -149,7 +151,7 @@ align
 کردن ترد‌ها پشت سر هم باشد.
 
 حال برای مقدار یک کیلوبایت آزمایش را انجام می‌دهیم. برای این کار صرفا خط
-\lr{\#define ALLOCATED\_MEMORY\_SIZE}
+\codeword{\#define ALLOCATED\_MEMORY\_SIZE}
 را دست می‌زنیم و جلوی آن
 1024
 می‌نویسیم. سپس دوباره اسکریپت را اجرا می‌کنیم که فایل
@@ -184,14 +186,14 @@ align
 \end{figure}
 همان طور که مشاهده می‌شود،‌ تفاوت آنچنانی بین شکل‌های ۱ تا ۳ و ۴ تا ۶ وجود ندارد.
 دلیل این موضوع می‌تواند این باشد که صرفا به ازای هر
-\lr{mprotect}
+\codeword{mprotect}
 یک
 \lr{TLB shootdown}
 داریم و از آنجا که سایز صفحه‌ی سیستم‌عامل من
 ۴۰۹۶ بایت است، پس مموری
 \lr{allocate}
 شده در دو حالت در یک صفحه قرار می‌گیرند و عملا رفتار
-\lr{mprotect}
+\codeword{mprotect}
 یکسان می‌شود بین دو حالت.
 
 در انتها نیز حالات
