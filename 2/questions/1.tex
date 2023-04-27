@@ -39,7 +39,26 @@
     \includegraphics[scale=0.7]{pic/1-tlb-debian.png}
     \caption{نتیجه‌ی سرچ عبارت \lr{TLB} در \codeword{perf list} در \lr{debian}}
 \end{figure}
-حال به کمک این آرگومان در ابتدا آزمایش را دوباره بر روی کامپیوتر شخصی خودم
+همچنین من متوجه شدم که نمی‌توان از آرگومان‌هایی مثل
+\codeword{dtlb\_load\_misses.miss\_causes\_a\_walk}
+نیز برای تشخیص دادن تعداد
+\lr{tlb miss}ها
+در ماشین مجازی استفاده کرد. من تمامی آرگومان‌های مربوط به
+\lr{DTLB miss}
+را تست کردم ولی تمامی آن‌ها مقدار
+0
+را بر می‌گرداندند مانند شکل
+\ref{fig:no_tlb_miss}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.25]{pic/1-tlb-miss-vm.png}
+    \caption{صفر بودن تمامی آرگومان‌های مربوط به \lr{TLB miss} در ماشین مجازی}
+    \label{fig:no_tlb_miss}
+\end{figure}
+
+حال به کمک آرگومان
+\codeword{tlb:tlb\_flush}
+در ابتدا آزمایش را دوباره بر روی کامپیوتر شخصی خودم
 انجام می‌دهم و سپس آنرا بر روی سرور‌های دانشگاه اجرا می‌کنیم.
 نتایج بدست آمده به صورت
 \lr{CSV}
