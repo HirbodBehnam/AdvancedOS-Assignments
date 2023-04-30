@@ -1,4 +1,4 @@
-threads,tlb_shootdown,tlb_miss,pagefault,time
+threads,tlb-shootdown,tlb-miss,pagefault,time
 1,16,1055938,328,0.386916663
 2,18,2211716,334,0.516548727
 3,18,4766940,332,0.773908180

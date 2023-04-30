@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "threads,tlb_shootdown,tlb_miss,pagefault,time" > stat.csv # empty the stat file
+echo "threads,tlb-shootdown,tlb-miss,pagefault,time" > stat.csv # empty the stat file
 for i in $(seq 1 7); do
     OUT=$(sudo perf stat -e tlb:tlb_flush,page-faults,dtlb_load_misses.miss_causes_a_walk ./2.out "$i" 2>&1)
     echo "$OUT"

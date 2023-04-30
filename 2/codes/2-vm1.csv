@@ -1,3 +1,3 @@
-threads,tlb_shootdown,tlb_miss,pagefault,time
-1,20,0,326,0.936102269
-2,20,0,328,1.250986094
+threads,tlb-shootdown,tlb-miss,pagefault,time
+1,20,-,326,0.936102269
+2,20,-,328,1.250986094
