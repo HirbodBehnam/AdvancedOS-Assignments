@@ -167,3 +167,55 @@ C
 زیاد پیش نمی‌آید. ولی دقت کنید که دیسک فوق العاده زیادی درگیر می‌شود که بلافاصله دیتا در دیسک
 نوشته شود.
 
+حال قسمت امتیازی تمرین را می‌زنیم. کافی است که پرچم تابع
+\codeword{msync}
+را
+\codeword{MS\_ASYNC}
+بکنیم. آزمایش را دوباره انجام می‌دهیم و نتیجه‌ها را در جداول
+\ref{table:msync_async_bare_metal} و \ref{table:msync_async_vm1} و \ref{table:msync_async_vm2}
+می‌توان دید.
+
+\begin{figure}[H]
+    \begin{latin}
+        \centering
+        \begin{tabular}{ccccc}
+        \hline
+        \csvreader[no head,table head=\hline,late after line=\\\hline]{codes/2-async-bare-metal.csv}{1=\one,2=\two,3=\three,4=\four,5=\five}
+        {\one & \two & \three & \four & \five}
+        \end{tabular}
+    \end{latin}
+    \caption{جدول اطلاعات مربوط به اجرای برنامه \lr{async} بر روی سیستم \lr{bare metal}}
+    \label{table:msync_async_bare_metal}
+\end{figure}
+\begin{figure}[H]
+    \begin{latin}
+        \centering
+        \begin{tabular}{ccccc}
+        \hline
+        \csvreader[no head,table head=\hline,late after line=\\\hline]{codes/2-async-vm1.csv}{1=\one,2=\two,3=\three,4=\four,5=\five}
+        {\one & \two & \three & \four & \five}
+        \end{tabular}
+    \end{latin}
+    \caption{جدول اطلاعات مربوط به اجرای برنامه \lr{async} بر روی ماشین مجازی اول}
+    \label{table:msync_async_vm1}
+\end{figure}
+\begin{figure}[H]
+    \begin{latin}
+        \centering
+        \begin{tabular}{ccccc}
+        \hline
+        \csvreader[no head,table head=\hline,late after line=\\\hline]{codes/2-async-vm2.csv}{1=\one,2=\two,3=\three,4=\four,5=\five}
+        {\one & \two & \three & \four & \five}
+        \end{tabular}
+    \end{latin}
+    \caption{جدول اطلاعات مربوط به اجرای برنامه \lr{async} بر روی ماشین مجازی دوم}
+    \label{table:msync_async_vm2}
+\end{figure}
+
+در این قسمت نیز مشاهده می‌شود که اعداد ما خیلی فرقی با اعداد جداول
+\ref{table:msync_bare_metal} و \ref{table:msync_vm1} و \ref{table:msync_vm2}
+ندارند. پس می‌توان گفت که
+\lr{async}
+بودن یا نبودن تاثیری بر روی
+\lr{TLB shootdown} و \lr{TLB miss} و \lr{page fault}
+و حتی زمان اجرای برنامه ندارد.
