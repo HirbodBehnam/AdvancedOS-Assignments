@@ -1,1 +1,132 @@
 \section{stress}
+در ابتدا بر روی کامپیوتر خودم دستورات ذکر شده را به کمک اسکریپت
+\lr{3.sh}
+اجرا کردم. نتیجه‌ی آنها در جدول
+\ref{table:bare_metal_stress}
+آمده است.
+\begin{figure}[H]
+    \begin{latin}
+        \centering
+        \begin{tabular}{|c|ccc|}
+        \hline
+        Type & TLB Shootdown & TLB Miss & Pagefault\\
+        \hline
+        CPU & 3105 & 476136 & 322\\
+        \hline
+        Memory & 85 & 98269 & 226\\
+        \hline
+        IO & 14131 & 73119467 & 223\\
+        \hline
+        \end{tabular}
+    \end{latin}
+    \caption{جدول مربوط به اجرای برنامه‌ی \lr{stress} بر روی کامپیوتر خودم با پارامتر‌های مختلف}
+    \label{table:bare_metal_stress}
+\end{figure}
+حال دقیقا همین اسکریپت را همزمان بر روی دو
+\lr{HPC}
+مربوط به درس اجرا می‌کنیم.
+\begin{figure}[H]
+    \begin{latin}
+        \centering
+        \begin{tabular}{|c|cccc|}
+        \hline
+        Type & \multicolumn{2}{c}{TLB Shootdown} & \multicolumn{2}{c|}{Pagefault}\\
+        \hline
+        Machine & VM1 & VM2 & VM1 & VM2\\
+        \hline
+        CPU & 13794 & 13753 & 297 & 295\\
+        \hline
+        Memory & 3521 & 3488 & 232 & 230\\
+        \hline
+        IO & 6464 & 13753 & 229 & 295\\
+        \hline
+        \end{tabular}
+    \end{latin}
+    \caption{جدول مربوط به اجرای برنامه‌ی \lr{stress} بر روی ماشین‌های مجازی به صورت همزمان}
+    \label{table:vm_stress}
+\end{figure}
+در نهایت دوباره آزمایش را انجام می‌دهیم ولی این بار فقط بر روی یک ماشین مجازی اجرا می‌کنیم.
+\begin{figure}[H]
+    \begin{latin}
+        \centering
+        \begin{tabular}{|c|cc|}
+        \hline
+        Type & TLB Shootdown & Pagefault\\
+        \hline
+        CPU & 14074 & 298\\
+        \hline
+        Memory & 3461 & 233\\
+        \hline
+        IO & 5933 & 233\\
+        \hline
+        \end{tabular}
+    \end{latin}
+    \caption{جدول مربوط به اجرای برنامه‌ی \lr{stress} بر روی ماشین‌های مجازی به صورت تکی}
+    \label{table:vm_stress_single}
+\end{figure}
+به نظر من این نتایج مقداری عجیب است. وقتی که به کمک برنامه‌ی
+\lr{stress}
+ما برنامه را ران می‌کنیم تعداد
+\lr{TLB shootdown}ها
+و حتی
+\lr{TLB Miss}
+ها خیلی کم است! و چیزی که عجیب است این است که تعداد
+\lr{TLB miss} و \lr{shootdown}
+در زمان
+\lr{CPU load}
+نیز اصلا کم نیست! من از روی کنجاکاوی به سورس کد برنامه‌ی
+\lr{stress}
+نگاهی انداختم. سورس کد برنامه در
+\link{https://github.com/resurrecting-open-source-projects/stress/blob/master/src/stress.c}{این لینک}
+موجود است.
+
+در ابتدا با توجه به تابع
+\lr{main}
+می‌توان دید که مثلا برای حالتی که
+\lr{CPU bound}
+هستیم صرفا به کمک
+\lr{fork}
+چندین پردازه‌ی جدید را ایجاد می‌کنیم و در همه‌ی آنها تابع
+\codeword{hogcpu()}
+را صدا می‌کنیم. این تابع صرفا در یک حلقه‌ی بینهایت تابع
+\codeword{sqrt}
+را بر روی اعداد رندوم صدا می‌کند.
+پس احتمالا تعداد زیاد
+\lr{TLB shootdown} و \lr{TLB miss}
+برای
+\lr{context switch}ها
+است.
+
+قسمت
+\lr{IO}
+نیر به صورت خیلی زیادی مشابه قسمت
+\lr{CPU}
+است. تنها فرق آن این این است که به جای
+\codeword{sqrt}
+تابع
+\codeword{sync}
+را صدا می‌زنیم. حال در
+\lr{man page}های
+لینوکس سرچ می‌کنیم که این دستور چه کار می‌کند.
+\begin{latin}
+    \begin{quote}
+        sync, syncfs - commit filesystem caches to disk
+
+        According to the standard specification  (e.g.,  POSIX.1-2001),  sync()
+       schedules the writes, but may return before the actual writing is done.
+       However Linux waits for I/O completions, and thus  sync()  or  syncfs()
+       provide the same guarantees as fsync() called on every file in the system or filesystem respectively.
+    \end{quote}
+\end{latin}
+پس به صورت خلاصه این دستور کش‌های سیستم‌عامل را در دیسک می‌نویسید ولی احتمال دارد که قبل از نوشته شدن تابع برگردد.
+مشاهده می‌شود که در حالت
+\lr{IO intensive}
+تعداد
+\lr{TLB Miss}ها
+افزایش می‌یابد. این موضوع به نظر من مقداری عجیب است چرا که اصلا ما کجا به مموری نیاز داریم که داریم
+\lr{TLB miss}
+می‌خوریم؟ من نهایت فکری که می‌توانم بکنم این است که برای این قسمت و قسمت قبل ممکن است که
+\lr{context switch}ها
+دلیل
+\lr{TLB shootdown}
+باشد.
