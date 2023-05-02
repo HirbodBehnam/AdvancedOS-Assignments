@@ -1,0 +1,3 @@
+threads,tlb_shootdown,tlb_miss,pagefault,time
+1,19,3184597,328,0.920740162
+2,20,6648345,327,1.198410678
