@@ -184,3 +184,30 @@
 را انجام دهند،‌ تاثیراتی را بر روی هم می‌گذارند که باعث می‌شود که هم کندتر شوند و هم اینکه
 \lr{TLB shootdown}ها
 بیشتر شود.
+
+\smalltitle{آپدیت بعد از درست شدن مقادیر \lr{perf}:}
+بعد از درست شدن مشکل
+\lr{perf}
+در
+\lr{HPC}های
+دانشگاه من باری دیگر همین تست‌ها را انجام دادم و نتیجه‌ی آنرا در زیر می‌آورم:
+\begin{figure}[H]
+    \small
+    \centering
+    \begin{latin}
+    \begin{tabular}{|c|cccc|cccc|}
+        \hline
+        \multirow{2}{*}{Thread \#} & \multicolumn{4}{|c|}{VM1} & \multicolumn{4}{|c|}{VM2}\\
+        & TLB Flush & TLB Miss & Page Fault & Time & TLB Flush & TLB Miss & Page Fault & Time\\
+        \hline
+        1 & 17&307884&67&0.194133870& 14&307371&65&0.196895015\\
+        2 & 287663&4612810&64&0.403384311 & 300284&4578368&69&0.440842966\\
+        \hline
+    \end{tabular}
+    \end{latin}
+    \caption{مشخصات اجرای بر روی هر یک از ماشین‌ها}
+\end{figure}
+همان طور که مشاهده می‌شود تعداد
+\lr{TLB flush} و \lr{page fault}
+و سرعت اجرای برنامه که تغییری نکرده است. (مشخصا!)
+% TODO

@@ -232,3 +232,76 @@ $2600 \times 4KB = 10.4MB$
 خوردیم. همان طور که مشخص است این عدد بسیار نزدیک به حجم فایلی بود که از دیسک
 \lr{memory mapped}
 کردیم.
+
+\smalltitle{آپدیت بعد از درست شدن مقادیر \lr{perf}:}
+جداول زیر مربوط به بعد از درست شدن مشکل
+\lr{perf}
+هستند:
+\begin{figure}[H]
+    \begin{latin}
+        \centering
+        \begin{tabular}{ccccc}
+        \hline
+        \csvreader[no head,table head=\hline,late after line=\\\hline]{codes/2-new-vm1.csv}{1=\one,2=\two,3=\three,4=\four,5=\five}
+        {\one & \two & \three & \four & \five}
+        \end{tabular}
+    \end{latin}
+    \caption{جدول اطلاعات مربوط به اجرای برنامه بر روی ماشین مجازی اول با پرچم \codeword{MS\_SYNC}}
+\end{figure}
+\begin{figure}[H]
+    \begin{latin}
+        \centering
+        \begin{tabular}{ccccc}
+        \hline
+        \csvreader[no head,table head=\hline,late after line=\\\hline]{codes/2-new-vm2.csv}{1=\one,2=\two,3=\three,4=\four,5=\five}
+        {\one & \two & \three & \four & \five}
+        \end{tabular}
+    \end{latin}
+    \caption{جدول اطلاعات مربوط به اجرای برنامه بر روی ماشین مجازی دوم با پرچم \codeword{MS\_SYNC}}
+\end{figure}
+\begin{figure}[H]
+    \begin{latin}
+        \centering
+        \begin{tabular}{ccccc}
+        \hline
+        \csvreader[no head,table head=\hline,late after line=\\\hline]{codes/2-new-async-vm1.csv}{1=\one,2=\two,3=\three,4=\four,5=\five}
+        {\one & \two & \three & \four & \five}
+        \end{tabular}
+    \end{latin}
+    \caption{جدول اطلاعات مربوط به اجرای برنامه بر روی ماشین مجازی اول با پرچم \codeword{MS\_ASYNC}}
+\end{figure}
+\begin{figure}[H]
+    \begin{latin}
+        \centering
+        \begin{tabular}{ccccc}
+        \hline
+        \csvreader[no head,table head=\hline,late after line=\\\hline]{codes/2-new-async-vm2.csv}{1=\one,2=\two,3=\three,4=\four,5=\five}
+        {\one & \two & \three & \four & \five}
+        \end{tabular}
+    \end{latin}
+    \caption{جدول اطلاعات مربوط به اجرای برنامه بر روی ماشین مجازی دوم با پرچم \codeword{MS\_ASYNC}}
+\end{figure}
+همان طور که از جداول بالا مشاهده می‌شود حالت
+\lr{async} با \lr{sync}
+فرقی با هم حتی در
+\lr{TLB miss}
+ندارند. ولی چیزی که برای من جالب است این است که تعداد
+\lr{TLB miss}ها
+نسبت به حالت
+\lr{bare metal}
+به شدت افزایش یافته است. در حالت
+\lr{bare metal}
+این تعداد در حدود یک میلیون بود ولی در حالت مجازی سازی شده در حدود سه میلیون است.
+این موضوع به نظر من به خاطر مشترک بودن
+\lr{TLB}
+ماشین مجازی من با بقیه‌ی ماشین مجازی‌ها است. فضای
+\lr{TLB}
+محدود است؛ در این آزمایش نیز حداقل دو ماشین مجازی در حال استفاده شدید از
+\lr{TLB}
+هستند. پس به احتمال خوبی
+\lr{TLB entry}ها
+مجبور به
+\lr{replace}
+شدن هستند. به همین دلیل تعداد
+\lr{TLB miss}ها
+افزایش می‌یابد.
