@@ -88,18 +88,18 @@
     7 & \multicolumn{3}{|c|}{-} & \multicolumn{3}{|c|}{-}\\
     \hline
 \end{tabular}
-\begin{tabular}{|c|ccc|}
+\begin{tabular}{|c|cccc|}
     \hline
-    \multirow{2}{*}{Thread Count} & \multicolumn{3}{|c|}{PC}\\
-    & TLB & Page Fault & Time\\
+    \multirow{2}{*}{Thread Count} & \multicolumn{4}{|c|}{PC}\\
+    & TLB Flush & TLB Miss & Page Fault & Time\\
     \hline
-    1 & 15&64&0.045217603\\
-    2 & 41086&68&0.061423277\\
-    3 & 1115350&68&0.202678926\\
-    4 & 1780128&72&0.244152961\\
-    5 & 2291388&72&0.310267841\\
-    6 & 3576638&76&0.403823629\\
-    7 & 5015257&78&0.455123317\\
+    1&15&101741&65&0.057957149\\
+    2&158775&1730285&67&0.087978371\\
+    3&963597&7518891&68&0.195919141\\
+    4&1727973&13826423&69&0.251293690\\
+    5&2277926&19421560&74&0.314809996\\
+    6&3595825&26156164&75&0.418881412\\
+    7&4981246&34637254&76&0.458051787\\
     \hline
 \end{tabular}
 \end{latin}
@@ -210,4 +210,50 @@
 همان طور که مشاهده می‌شود تعداد
 \lr{TLB flush} و \lr{page fault}
 و سرعت اجرای برنامه که تغییری نکرده است. (مشخصا!)
-% TODO
+اما متوجه می‌شویم که تعداد
+\lr{TLB miss}ها
+نسبت به حالت
+\lr{bare metal}
+تقریبا سه برابر شده است. این موضوع می‌تواند دو دلیل داشته باشد. یکی اینکه لود سرور زیاد است و دیگری
+اینکه حجم
+\lr{TLB}
+سرور از
+\lr{TLB}
+من کمتر است. با توجه به
+\link{https://www.cpu-world.com/CPUs/Xeon/Intel-Xeon\%20E5-2699\%20v4.html}{این لینک}
+مشخصات
+\lr{TLB}
+پردازنده‌ی ماشین‌مجازی دانشگاه به صورت زیر است:
+\begin{latin}
+    \begin{itemize}
+        \item 64-byte Prefetching
+        \item Data TLB: 1-GB pages, 4-way set associative, 4 entries
+        \item Data TLB: 4-KB Pages, 4-way set associative, 64 entries
+        \item Instruction TLB: 4-KByte pages, 8-way set associative, 64 entries
+        \item L2 TLB: 1-MB, 4-way set associative, 64-byte line size
+        \item Shared 2nd-Level TLB: 4-KB / 2-MB pages, 6-way associative, 1536 entries. Plus, 1-GB pages, 4-way, 16 entries
+    \end{itemize}
+\end{latin}
+و طبق
+\link{https://www.cpu-world.com/CPUs/Core_i7/Intel-Core\%20i7-4790K.html}{این لینک}
+مشخصات
+\lr{CPU}
+خودم را بررسی می‌کنم.
+\begin{latin}
+    \begin{itemize}
+        \item 64-byte Prefetching
+        \item Data TLB: 1-GB pages, 4-way set associative, 4 entries
+        \item Data TLB: 4-KB Pages, 4-way set associative, 64 entries
+        \item Instruction TLB: 4-KByte pages, 8-way set associative, 64 entries
+        \item L2 TLB: 1-MB, 4-way set associative, 64-byte line size
+        \item Shared 2nd-Level TLB: 4-KByte / 2-MB pages, 8-way associative, 1024 entries
+    \end{itemize}
+\end{latin}
+نه تنها کمتر نیست بلکه تعداد
+\lr{entry}های
+\lr{shared TLB}
+بیشتر نیز است! پس به احتمال زیاد دلیل اول است که باعث می‌شود تعداد
+\lr{TLB miss}
+ها زیاد شود مخصوصا وقتی که دو ماشین مجازی همزمان در حال استفاده از
+\lr{TLB}
+هستند.
