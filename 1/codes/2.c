@@ -38,7 +38,8 @@ void *mapper_thread(void *args) {
 }
 
 void *mapper_thread_2(void *args) {
-    // Wait for memory to be allocated
+    return NULL;  
+  // Wait for memory to be allocated
     pthread_mutex_lock(&exchanged_cond_var_lock);
     while (exchanged == NULL)
         pthread_cond_wait(&exchanged_cond_var, &exchanged_cond_var_lock);
@@ -123,7 +124,7 @@ int main(int argc, char **argv) {
     pthread_create(&threads[1], &attr, mapper_thread_2, NULL);
     // Here we act as the part of question asks us
     assign_exclusive_cpu_core(&attr);
-    pthread_create(&threads[2], &attr, write_thread, NULL);
+    pthread_create(&threads[2], &attr, reader_thread, NULL);
     assign_exclusive_cpu_core(&attr);
     pthread_create(&threads[3], &attr, write_thread, NULL);
     // Join the threads

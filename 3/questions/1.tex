@@ -1,0 +1,24 @@
+\section{\lr{Page Cache}}
+به نظر من بهتر است که در ابتدا خارج از برنامه فایل مذکور را ساخته و سپس بعد برنامه‌ای بنویسیم که فقط خواندن و سپس
+فقط نوشتن را انجام دهد. برای بیشتر حس شدن تاثیر
+\lr{read} و \lr{write}
+من با اینکه سیستم خودم بر روی
+\lr{nVME}
+نصب است ولی بر روی یک هارد دیسک دیتا را ذخیره می‌کنم که کند باشد. این پارتیشن با فایل سیستم
+\lr{ext4}
+فرمت شده است.
+
+برای ساختن فایل از دستور زیر استفاده می‌کنیم:
+\samplebox{dd if=/dev/urandom of=/media/hirbod/LinuxHDD/sample.dat count=10240 bs=1M}
+
+\samplebox{real    2m48.880s\\
+user    0m1.650s\\
+sys     0m28.315s} % Read Cache
+
+\samplebox{real    26m16.402s\\
+user    0m10.612s\\
+sys     2m41.620s} % Read Direct
+
+\samplebox{real    30m6.216s\\
+user    0m3.986s\\
+sys     4m11.283s} % Write Cache
