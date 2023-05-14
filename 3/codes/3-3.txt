@@ -1,0 +1,19 @@
+hirbod@hirbod-behnam-99171333:~/Desktop$ ls -lh /dev/disk/by-id/wwn-0x50026b724c01dd3e-part4
+lrwxrwxrwx 1 root root 10 May 14 23:26 /dev/disk/by-id/wwn-0x50026b724c01dd3e-part4 -> ../../sda4
+hirbod@hirbod-behnam-99171333:~/Desktop$ sudo casadm -S -d /dev/disk/by-id/wwn-0x50026b724c01dd3e-part4 --force -c wb
+Successfully added cache instance 1
+hirbod@hirbod-behnam-99171333:~/Desktop$ ls -lh /dev/disk/by-id/wwn-0x50014ee6058277fa-part8
+lrwxrwxrwx 1 root root 10 May 14 23:33 /dev/disk/by-id/wwn-0x50014ee6058277fa-part8 -> ../../sdc8
+hirbod@hirbod-behnam-99171333:~/Desktop$ sudo casadm -A -d /dev/disk/by-id/wwn-0x50014ee6058277fa-part8 -i 1
+Successfully added core 1 to cache instance 1
+hirbod@hirbod-behnam-99171333:~/Desktop$ sudo casadm -L
+type    id   disk        status    write policy   device
+cache   1    /dev/sda4   Running   wt             -
+└core   1    /dev/sdc8   Active    -              /dev/cas1-1
+hirbod@hirbod-behnam-99171333:~/Desktop$ ls /dev/cas*
+/dev/cas1-1  /dev/cas_ctrl
+hirbod@hirbod-behnam-99171333:~/Desktop$ sudo casadm -R -j 1 -i 1
+hirbod@hirbod-behnam-99171333:~/Desktop$ sudo casadm -T -i 1
+hirbod@hirbod-behnam-99171333:~/Desktop$ sudo casadm -L
+No caches running
+hirbod@hirbod-behnam-99171333:~/Desktop$

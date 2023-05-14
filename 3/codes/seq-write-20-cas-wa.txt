@@ -1,0 +1,32 @@
+iops_test_job: (g=0): rw=write, bs=(R) 4096KiB-4096KiB, (W) 4096KiB-4096KiB, (T) 4096KiB-4096KiB, ioengine=libaio, iodepth=8
+fio-3.28
+Starting 1 process
+iops_test_job: Laying out IO file (1 file / 20480MiB)
+
+iops_test_job: (groupid=0, jobs=1): err= 0: pid=83038: Mon May 15 00:26:37 2023
+  write: IOPS=33, BW=133MiB/s (140MB/s)(20.0GiB/153605msec); 0 zone resets
+    slat (usec): min=109, max=315446, avg=1736.95, stdev=16041.27
+    clat (msec): min=24, max=526, avg=238.23, stdev=41.60
+     lat (msec): min=30, max=537, avg=239.96, stdev=40.77
+    clat percentiles (msec):
+     |  1.00th=[  127],  5.00th=[  213], 10.00th=[  215], 20.00th=[  222],
+     | 30.00th=[  224], 40.00th=[  224], 50.00th=[  228], 60.00th=[  232],
+     | 70.00th=[  236], 80.00th=[  249], 90.00th=[  279], 95.00th=[  317],
+     | 99.00th=[  405], 99.50th=[  460], 99.90th=[  498], 99.95th=[  506],
+     | 99.99th=[  527]
+   bw (  KiB/s): min=65536, max=155648, per=100.00%, avg=136586.88, stdev=13798.39, samples=306
+   iops        : min=   16, max=   38, avg=33.35, stdev= 3.37, samples=306
+  lat (msec)   : 50=0.10%, 100=0.51%, 250=79.69%, 500=19.61%, 750=0.10%
+  cpu          : usr=0.75%, sys=0.36%, ctx=10664, majf=0, minf=14
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=99.9%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued rwts: total=0,5120,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=8
+
+Run status group 0 (all jobs):
+  WRITE: bw=133MiB/s (140MB/s), 133MiB/s-133MiB/s (140MB/s-140MB/s), io=20.0GiB (21.5GB), run=153605-153605msec
+
+Disk stats (read/write):
+    cas1-1: ios=0/6211, merge=0/0, ticks=0/1517032, in_queue=1517032, util=98.52%, aggrios=126/21198, aggrmerge=118/729, aggrticks=45989/4796620, aggrin_queue=4873667, aggrutil=99.56%
+  sdc: ios=126/21198, merge=118/729, ticks=45989/4796620, in_queue=4873667, util=99.56%
