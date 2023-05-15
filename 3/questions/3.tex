@@ -131,7 +131,7 @@ sudo casadm -T -i 1}
 در نهایت با
 \lr{write around}
 تست می‌کنیم.
-تایج آن در شکل
+نتایج آن در شکل
 \ref{fig:3-4-wa}
 آمده است.
 \begin{figure}[H]
@@ -154,3 +154,51 @@ sudo casadm -T -i 1}
 نمی‌آورد. به همین دلیل سرعت آن برابر سرعت
 \lr{HDD}
 شده بود.
+
+تمامی فایل‌های ریپورت
+\lr{fio}
+در فولدر
+\lr{codes}
+موجود هستند.
+
+حال سناریو خواندن را امتحان می‌کنیم. در ابتدا دستور داده شده در دستور کار برنامه را اجرا می‌کنیم.
+نتایج اجرا در شکل
+\ref{fig:3-rand-read-16}
+آمده است.
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.25]{pic/3-rand-read-16.png}
+    \caption{خواندن از کش با دستور داده شده در سوال}
+    \label{fig:3-rand-read-16}
+\end{figure}
+در این سناریو اتفاق جالبی افتاد! در ابتدا زمانی که ۱۶ تا کار با هم در حال اجرا بودند در ابتدا همان طور که در اسکرین‌شات
+نیز معلوم است در ابتدا سرعت خواندن برابر حدود ۶۰ مگابایت بر ثانیه بود. زمانی که تسک‌ها یکی یکی تمام می‌شدند سرعت
+خواندن بیشتر می‌شدند. در انتها سرعت خواندن حتی به ۲۰۰ مگابایت بر ثانیه می‌رسید. این موضوع دو دلیل می‌تواند داشته
+باشد. یکی اینکه کش در حال
+\lr{populate}
+شدن بودن و یکی اینکه این سرعت
+\lr{random read}
+از دیسک سخت و جامد کمتر از سرعت خواندن
+\lr{sequential}
+داشته باشد.
+
+من برای همین موضوع یک تست دیگر را نیز انجام دادم. در این تست یک بار کش را کامل
+\lr{unmount} و \lr{mount}
+کردم. سپس به کمک دستور زیر صرفا یک فایل یک گیگابایتی را خواندم:
+\samplebox{fio --filename="/media/hirbod/Linux External/file.txt" --random\_distribution=zipf:1.2 --direct=1 --rw=randread --io\_size=4G --bs=4MB --ioengine=libaio --iodepth=16 --numjobs=1 --group\_reporting --name=iops\_test\_job --eta-newline=1 --output=random-read-1.txt}
+در این دستور یک فایل ۴ گیگی که کمتر از حجم کش هست را فقط یک برنامه به صورت رندوم می‌خواند.
+اولین باری که این برنامه را اجرا می‌کنم سرعت خواندن کم است.
+(شکل \ref{fig:cold-cache})
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.25]{pic/3-cold-cache.png}
+    \caption{خواندن از دیسک زمانی که کش خالی است}
+    \label{fig:cold-cache}
+\end{figure}
+حال در صورتی که دوباره برنامه را اجرا کنیم سرعت خواندن خیلی خیلی سریع‌تر می‌شود:
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.25]{pic/3-warm-cache.png}
+    \caption{خواندن از دیسک زمانی که کش پر است}
+    \label{fig:warm-cache}
+\end{figure}
