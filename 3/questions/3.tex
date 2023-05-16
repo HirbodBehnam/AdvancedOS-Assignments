@@ -67,6 +67,11 @@
 استفاده کنیم. به کمک دستورات زیر می‌توان دیسک جامد را کش برای پارتیشن دیسک سخت کرد.
 \samplebox{sudo casadm -S -d /dev/disk/by-id/wwn-0x50026b724c01dd3e-part4 --force -c wt\\
 sudo casadm -A -d /dev/disk/by-id/wwn-0x50014ee6058277fa-part8 -i 1}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.25]{pic/3-cas-activate.png}
+    \caption{مراحل مشخص کردن دیسک کش و دیسک backend}
+\end{figure}
 
 حال در صورتی که اصلا در
 \lr{file explorer}
@@ -154,6 +159,33 @@ sudo casadm -T -i 1}
 نمی‌آورد. به همین دلیل سرعت آن برابر سرعت
 \lr{HDD}
 شده بود.
+
+زمانی که داشتم گزارش را می‌نوشتم به یک سناریو دیگر خارج از تمرین فکر کردم که می‌تواند کمی شفاف‌سازی
+درباره‌ی عملکرد بدتر کش به ما بدهد. به کمک دستور زیر یک فایل 1 گیگابایتی بر روی پارتیشن می‌سازیم.
+نوع کش را نیز
+\lr{write back}
+می‌گذاریم که فایل بلافاصه در backend نوشته نشود.
+\samplebox{dd if=/dev/urandom of=file.dat bs=1MB count=1024}
+نتیجه‌ی اجرا به همراه یک دستور گرفتن وضعیت
+\lr{openCAS}
+در شکل
+\ref{fig:small_write}
+آمده است.
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.25]{pic/3-small-wb.png}
+    \caption{نوشتن یک فایل یک گیگابایتی در کش}
+    \label{fig:small_write}
+\end{figure}
+همان طور که مشخص است سرعت نوشتن بسیار بسیار بیشتر شد چرا که کل فایل را عملا در
+\lr{SSD}
+نوشتیم! همچنین زمانی که پارتیشن را
+\lr{unmount}
+می‌کنیم یا زمانی که سیستم بیکار است دیتا از
+\lr{SSD}
+به
+\lr{HDD}
+منقل می‌شود.
 
 تمامی فایل‌های ریپورت
 \lr{fio}
